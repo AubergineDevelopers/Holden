@@ -4,9 +4,31 @@
 
 <p align="center">Certificate Generator made with Flutter.</p>
 
-## Getting Started
+<p align="center"><img width="300" src="https://raw.githubusercontent.com/AubergineDevelopers/Holden/master/screenshots/app_flow.gif"></p>
 
-This project is a starting point for a Flutter application.
+## Dependencies
+- [spreadsheet_decoder](https://pub.dev/packages/spreadsheet_decoder)
+
+- [path_provider](https://pub.dev/packages/path_provider)
+
+- [file_picker](https://pub.dev/packages/file_picker)
+
+- [pdf_viewer_plugin](https://pub.dev/packages/pdf_viewer_plugin)
+
+- [pdf](https://pub.dev/packages/pdf)
+
+- [permission_handler](https://pub.dev/packages/permission_handler)
+
+- [share_extend](https://pub.dev/packages/share_extend)
+
+- [provider](https://pub.dev/packages/provider)
+
+- [printing](https://pub.dev/packages/printing)
+
+## Contributing
+Feel free to contribute to the project by creating [issues](https://github.com/AubergineDevelopers/Holden/issues) or sending pull-requests.
+
+## Getting Started
 
 A few resources to get you started if this is your first Flutter project:
 
