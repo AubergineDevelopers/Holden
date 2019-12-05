@@ -63,12 +63,13 @@ class HomeScreen extends StatelessWidget {
                                           arguments: {'result': value});
                                     },
                                     leading: Container(
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: Image.network(
-                                          '${value[1]}',
-                                        ),
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.deepPurple[200],
                                       ),
+                                      child: Icon(Icons.person, color: Colors.deepPurple[100], size: 30,),
                                     ),
                                     title: Text(
                                       value[0],

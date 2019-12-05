@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdf;
 import 'package:path_provider/path_provider.dart';
+import 'package:printing/printing.dart';
 import 'package:share_extend/share_extend.dart';
 
 class ResultScreen extends StatelessWidget {
@@ -32,12 +33,16 @@ class ResultScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network(
-                        '${result['result'][1]}',
-                        height: 50,
-                      ),
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.deepPurple[200],
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.deepPurple[100],
+                      size: 35,
                     ),
                   ),
                   SizedBox(
@@ -70,20 +75,16 @@ class ResultScreen extends StatelessWidget {
                   height: 50,
                 ),
                 Container(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(150),
-                    child: Image.network(
-                      '${result['result'][1]}',
-                      height: 150,
-                      width: 150,
-                    ),
-                  ),
+                  width: 150,
+                  height: 150,
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.deepPurple,
-                      width: 1,
-                    ),
                     shape: BoxShape.circle,
+                    color: Colors.deepPurple[200],
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.deepPurple[100],
+                    size: 100,
                   ),
                 ),
                 SizedBox(
@@ -253,6 +254,12 @@ class ResultScreen extends StatelessWidget {
 
   void pdfGenerator(name) async {
     final _pdf = pdf.Document();
+    final _assetImage = await pdfImageFromImageProvider(
+      pdf: _pdf.document,
+      image: AssetImage(
+        'assets/images/account.png',
+      ),
+    );
     _pdf.addPage(
       pdf.Page(
         pageFormat: PdfPageFormat.a4,
@@ -269,16 +276,13 @@ class ResultScreen extends StatelessWidget {
                   height: 50,
                 ),
                 pdf.Container(
-                  padding: pdf.EdgeInsets.all(40),
-                  child: pdf.FlutterLogo(),
+                  width: 160,
+                  height: 160,
                   decoration: pdf.BoxDecoration(
-                    border: pdf.BoxBorder(
-                      color: PdfColors.grey500,
-                      width: 5,
-                    ),
                     shape: pdf.BoxShape.circle,
-                    color: PdfColors.grey300,
+                    color: PdfColors.deepPurple200,
                   ),
+                  child: pdf.Image(_assetImage),
                 ),
                 pdf.SizedBox(
                   height: 50,
