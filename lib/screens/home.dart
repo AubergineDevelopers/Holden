@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 import 'package:file_picker/file_picker.dart';
@@ -37,62 +36,56 @@ class HomeScreen extends StatelessWidget {
         ),
         body: Center(
           child: homeProvider.xlsxFilePath != null
-              ? FutureBuilder(
-                  future: DownloadsPathProvider.downloadsDirectory,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData &&
-                        snapshot.connectionState == ConnectionState.done) {
-                      var decoded = SpreadsheetDecoder.decodeBytes(
-                          File(homeProvider.xlsxFilePath).readAsBytesSync());
-                      homeProvider.xlsxFileData = decoded.tables['Sheet1'].rows;
-                      return ListView(
-                        padding: EdgeInsets.all(16),
-                        children: <Widget>[
-                          ...decoded.tables['Sheet1'].rows.map(
-                            (value) => Column(
-                              children: <Widget>[
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: ListTile(
-                                    contentPadding: EdgeInsets.all(16),
-                                    onTap: () {
-                                      Navigator.pushNamed(context, '/result',
-                                          arguments: {'result': value});
-                                    },
-                                    leading: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.deepPurple[200],
-                                      ),
-                                      child: Icon(Icons.person, color: Colors.deepPurple[100], size: 30,),
+              ? ListView(
+                  padding: EdgeInsets.all(16),
+                  children: <Widget>[
+                    ...SpreadsheetDecoder.decodeBytes(
+                            File(homeProvider.xlsxFilePath).readAsBytesSync())
+                        .tables['Sheet1']
+                        .rows
+                        .map(
+                          (value) => Column(
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.all(16),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/result',
+                                        arguments: {'result': value});
+                                  },
+                                  leading: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.deepPurple[200],
                                     ),
-                                    title: Text(
-                                      value[0],
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.deepPurple[100],
+                                      size: 30,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    value[0],
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(
+                                height: 24,
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    }
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
+                        ),
+                  ],
                 )
               : Center(
                   child: Text(

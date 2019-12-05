@@ -9,16 +9,15 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.2
-  spreadsheet_decoder:
-  downloads_path_provider:
-  path_provider:
-  file_picker:
-  pdf_viewer_plugin:
-  pdf:
-  permission_handler:
-  share_extend:
-  provider:
-  printing:
+  spreadsheet_decoder: # parsing xlsx files
+  path_provider: # reading/writing files in application document directory
+  file_picker: # using local files from device
+  pdf_viewer_plugin: # viewing pdf files
+  pdf: # generating pdf file
+  permission_handler: # handling runtime permissions
+  share_extend: # sharing files
+  provider: # state-management
+  printing: # using image assets in pdf generation
 
 dev_dependencies:
   flutter_test:

@@ -64,13 +64,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
-  downloads_path_provider:
-    dependency: "direct main"
-    description:
-      name: downloads_path_provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
   file_picker:
     dependency: "direct main"
     description:
