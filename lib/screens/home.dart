@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
-import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:share_extend/share_extend.dart';
+import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
 import 'package:certificate_generator/providers/home.dart';
+import 'package:certificate_generator/utils/commons.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -24,15 +26,76 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           centerTitle: true,
+          bottom: homeProvider.xlsxFilePath != null
+              ? PreferredSize(
+                  preferredSize: Size.fromHeight(60),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 60),
+                    child: DropdownButtonFormField(
+                      value: homeProvider.xlsxFileSelectedTable,
+                      onChanged: (newXlsxFileSelectedTable) {
+                        homeProvider.xlsxFileSelectedTable =
+                            newXlsxFileSelectedTable;
+                      },
+                      items: [
+                        ...homeProvider.xlsxFileTables.keys.map(
+                          (table) => DropdownMenuItem(
+                            child: Text(table),
+                            value: table,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : PreferredSize(
+                  child: Container(),
+                  preferredSize: Size.fromHeight(0),
+                ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            homeProvider.xlsxFilePath = await FilePicker.getFilePath(
-              type: FileType.CUSTOM,
-              fileExtension: 'xlsx',
-            );
-          },
-          child: Icon(Icons.attach_file),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            homeProvider.xlsxFilePath != null
+                ? FloatingActionButton(
+                    heroTag: 'Share',
+                    onPressed: () async {
+                      final names = homeProvider
+                          .xlsxFileTables[homeProvider.xlsxFileSelectedTable]
+                          .rows
+                          .map((name) => name
+                              .toString()
+                              .substring(1, name.toString().length - 1));
+                      names.forEach((name) => pdfGenerator(name));
+                      final String downloadPath =
+                          await getApplicationDocumentsDirectoryPath();
+                      final files = names
+                          .map((name) => File('$downloadPath/$name.pdf').path);
+                      await ShareExtend.shareMultiple([
+                        ...files,
+                      ], 'file');
+                    },
+                    child: Icon(Icons.share),
+                  )
+                : Container(),
+            SizedBox(
+              height: 30,
+            ),
+            FloatingActionButton(
+              heroTag: 'Attach',
+              onPressed: () async {
+                homeProvider.xlsxFilePath = await FilePicker.getFilePath(
+                  type: FileType.CUSTOM,
+                  fileExtension: 'xlsx',
+                );
+                homeProvider.xlsxFileTables = SpreadsheetDecoder.decodeBytes(
+                        File(homeProvider.xlsxFilePath).readAsBytesSync())
+                    .tables;
+              },
+              child: Icon(Icons.attach_file),
+            ),
+          ],
         ),
         body: Center(
           child: homeProvider.xlsxFilePath != null
@@ -41,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                   children: <Widget>[
                     ...SpreadsheetDecoder.decodeBytes(
                             File(homeProvider.xlsxFilePath).readAsBytesSync())
-                        .tables['Sheet1']
+                        .tables[homeProvider.xlsxFileSelectedTable]
                         .rows
                         .map(
                           (value) => Column(

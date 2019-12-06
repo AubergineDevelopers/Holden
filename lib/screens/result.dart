@@ -2,16 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pdf;
-import 'package:path_provider/path_provider.dart';
-import 'package:printing/printing.dart';
 import 'package:share_extend/share_extend.dart';
+
+import 'package:certificate_generator/utils/commons.dart';
 
 class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> result = ModalRoute.of(context).settings.arguments;
+    String name = (ModalRoute.of(context).settings.arguments
+        as Map<String, dynamic>)['result'][0];
     return Scaffold(
       backgroundColor: Colors.deepPurple[400],
       appBar: AppBar(
@@ -49,7 +48,7 @@ class ResultScreen extends StatelessWidget {
                     width: 20,
                   ),
                   Text(
-                    result['result'][0],
+                    name,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                     ),
@@ -110,7 +109,7 @@ class ResultScreen extends StatelessWidget {
                   height: 30,
                 ),
                 Text(
-                  result['result'][0],
+                  name,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -125,20 +124,18 @@ class ResultScreen extends StatelessWidget {
                   children: <Widget>[
                     FlatButton(
                       onPressed: () {
-                        pdfGenerator(result['result'][0]);
+                        pdfGenerator(name);
                         Scaffold.of(context).showSnackBar(
                           SnackBar(
-                            content:
-                                Text('${result['result'][0]}.pdf downloaded'),
+                            content: Text('$name.pdf downloaded'),
                             action: SnackBarAction(
                               label: 'View',
                               onPressed: () async {
-                                Directory downloadPath =
-                                    await getApplicationDocumentsDirectory();
+                                String downloadPath =
+                                    await getApplicationDocumentsDirectoryPath();
                                 Navigator.pushNamed(context, '/viewer',
                                     arguments: {
-                                      'view':
-                                          '${downloadPath.path}/${result['result'][0]}.pdf'
+                                      'view': '$downloadPath/$name.pdf'
                                     });
                               },
                             ),
@@ -149,37 +146,30 @@ class ResultScreen extends StatelessWidget {
                     ),
                     FlatButton(
                       onPressed: () async {
-                        Directory downloadPath =
-                            await getApplicationDocumentsDirectory();
-                        if (File(
-                                '${downloadPath.path}/${result['result'][0]}.pdf')
-                            .existsSync()) {
-                          Navigator.pushNamed(context, '/viewer', arguments: {
-                            'view':
-                                '${downloadPath.path}/${result['result'][0]}.pdf'
-                          });
+                        String downloadPath =
+                            await getApplicationDocumentsDirectoryPath();
+                        if (File('$downloadPath/$name.pdf').existsSync()) {
+                          Navigator.pushNamed(context, '/viewer',
+                              arguments: {'view': '$downloadPath/$name.pdf'});
                         } else {
                           Scaffold.of(context).showSnackBar(
                             SnackBar(
-                              content:
-                                  Text('${result['result'][0]} File Not Found'),
+                              content: Text('$name.pdf File Not Found'),
                               action: SnackBarAction(
                                 label: 'Download',
                                 onPressed: () {
-                                  pdfGenerator(result['result'][0]);
+                                  pdfGenerator(name);
                                   Scaffold.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                          '${result['result'][0]}.pdf downloaded'),
+                                      content: Text('$name.pdf downloaded'),
                                       action: SnackBarAction(
                                         label: 'View',
                                         onPressed: () async {
-                                          Directory downloadPath =
-                                              await getApplicationDocumentsDirectory();
+                                          String downloadPath =
+                                              await getApplicationDocumentsDirectoryPath();
                                           Navigator.pushNamed(
                                               context, '/viewer', arguments: {
-                                            'view':
-                                                '${downloadPath.path}/${result['result'][0]}.pdf'
+                                            'view': '$downloadPath/$name.pdf'
                                           });
                                         },
                                       ),
@@ -195,37 +185,30 @@ class ResultScreen extends StatelessWidget {
                     ),
                     FlatButton(
                       onPressed: () async {
-                        Directory downloadPath =
-                            await getApplicationDocumentsDirectory();
-                        if (File(
-                                '${downloadPath.path}/${result['result'][0]}.pdf')
-                            .existsSync()) {
+                        String downloadPath =
+                            await getApplicationDocumentsDirectoryPath();
+                        if (File('$downloadPath/$name.pdf').existsSync()) {
                           ShareExtend.share(
-                              File('${downloadPath.path}/${result['result'][0]}.pdf')
-                                  .path,
-                              'file');
+                              File('$downloadPath/$name.pdf').path, 'file');
                         } else {
                           Scaffold.of(context).showSnackBar(
                             SnackBar(
-                              content:
-                                  Text('${result['result'][0]} File Not Found'),
+                              content: Text('$name.pdf File Not Found'),
                               action: SnackBarAction(
                                 label: 'Download',
                                 onPressed: () {
-                                  pdfGenerator(result['result'][0]);
+                                  pdfGenerator(name);
                                   Scaffold.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                          '${result['result'][0]}.pdf downloaded'),
+                                      content: Text('$name.pdf downloaded'),
                                       action: SnackBarAction(
                                         label: 'View',
                                         onPressed: () async {
-                                          Directory downloadPath =
-                                              await getApplicationDocumentsDirectory();
+                                          String downloadPath =
+                                              await getApplicationDocumentsDirectoryPath();
                                           Navigator.pushNamed(
                                               context, '/viewer', arguments: {
-                                            'view':
-                                                '${downloadPath.path}/${result['result'][0]}.pdf'
+                                            'view': '$downloadPath/$name.pdf'
                                           });
                                         },
                                       ),
@@ -250,77 +233,5 @@ class ResultScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void pdfGenerator(name) async {
-    final _pdf = pdf.Document();
-    final _assetImage = await pdfImageFromImageProvider(
-      pdf: _pdf.document,
-      image: AssetImage(
-        'assets/images/account.png',
-      ),
-    );
-    _pdf.addPage(
-      pdf.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (context) => pdf.Center(
-          child: pdf.Container(
-            margin: pdf.EdgeInsets.all(16),
-            width: double.maxFinite,
-            color: PdfColors.deepPurple50,
-            child: pdf.Column(
-              mainAxisAlignment: pdf.MainAxisAlignment.center,
-              crossAxisAlignment: pdf.CrossAxisAlignment.center,
-              children: [
-                pdf.SizedBox(
-                  height: 50,
-                ),
-                pdf.Container(
-                  width: 160,
-                  height: 160,
-                  decoration: pdf.BoxDecoration(
-                    shape: pdf.BoxShape.circle,
-                    color: PdfColors.deepPurple200,
-                  ),
-                  child: pdf.Image(_assetImage),
-                ),
-                pdf.SizedBox(
-                  height: 50,
-                ),
-                pdf.Text(
-                  'certificate of completion',
-                  style: pdf.TextStyle(
-                    fontSize: 22,
-                    color: PdfColors.grey700,
-                  ),
-                ),
-                pdf.SizedBox(
-                  height: 20,
-                ),
-                pdf.Text(
-                  'presented to:',
-                  style: pdf.TextStyle(
-                    color: PdfColors.grey600,
-                  ),
-                ),
-                pdf.SizedBox(
-                  height: 30,
-                ),
-                pdf.Text(
-                  name,
-                  style: pdf.TextStyle(
-                    fontSize: 24,
-                    fontWeight: pdf.FontWeight.bold,
-                    color: PdfColors.grey800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-    var path = await getApplicationDocumentsDirectory();
-    File('${path.path}/$name.pdf').writeAsBytesSync(_pdf.save());
   }
 }
