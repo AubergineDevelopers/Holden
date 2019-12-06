@@ -24,6 +24,7 @@ class ResultScreen extends StatelessWidget {
           child: Text('Result'),
         ),
         centerTitle: true,
+        // name and dummy photo of the participant below app-bar
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(64),
           child: Column(
@@ -63,6 +64,7 @@ class ResultScreen extends StatelessWidget {
         ),
       ),
       body: Builder(
+        // certificate of particular participant
         builder: (context) => SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.all(16),
@@ -122,6 +124,7 @@ class ResultScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
+                    // download certificate
                     FlatButton(
                       onPressed: () {
                         pdfGenerator(name);
@@ -144,6 +147,8 @@ class ResultScreen extends StatelessWidget {
                       },
                       child: Icon(Icons.file_download),
                     ),
+
+                    // view certificate
                     FlatButton(
                       onPressed: () async {
                         String downloadPath =
@@ -183,6 +188,8 @@ class ResultScreen extends StatelessWidget {
                       },
                       child: Icon(Icons.open_in_new),
                     ),
+
+                    // share certificate
                     FlatButton(
                       onPressed: () async {
                         String downloadPath =

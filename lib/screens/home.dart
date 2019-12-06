@@ -27,6 +27,7 @@ class HomeScreen extends StatelessWidget {
           ),
           centerTitle: true,
           bottom: homeProvider.xlsxFilePath != null
+              // shows drop-down populated with tables from selected xlsx file
               ? PreferredSize(
                   preferredSize: Size.fromHeight(60),
                   child: Container(
@@ -61,17 +62,24 @@ class HomeScreen extends StatelessWidget {
                 ? FloatingActionButton(
                     heroTag: 'Share',
                     onPressed: () async {
+                      // retrieves all names from selected table
                       final names = homeProvider
                           .xlsxFileTables[homeProvider.xlsxFileSelectedTable]
                           .rows
                           .map((name) => name
                               .toString()
                               .substring(1, name.toString().length - 1));
+
+                      // generates all certificates from selected table
                       names.forEach((name) => pdfGenerator(name));
                       final String downloadPath =
                           await getApplicationDocumentsDirectoryPath();
+
+                      // retrieves file paths of all certificates from selected table
                       final files = names
                           .map((name) => File('$downloadPath/$name.pdf').path);
+
+                      // shares all certificate from table via selected app
                       await ShareExtend.shareMultiple([
                         ...files,
                       ], 'file');
@@ -79,6 +87,13 @@ class HomeScreen extends StatelessWidget {
                     child: Icon(Icons.share),
                   )
                 : Container(),
+            SizedBox(
+              height: 30,
+            ),
+            FloatingActionButton(
+              onPressed: () {},
+              child: Icon(Icons.insert_link),
+            ),
             SizedBox(
               height: 30,
             ),
@@ -102,6 +117,7 @@ class HomeScreen extends StatelessWidget {
               ? ListView(
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
+                    // reads names from selected table from spreadsheet and displays them in list
                     ...SpreadsheetDecoder.decodeBytes(
                             File(homeProvider.xlsxFilePath).readAsBytesSync())
                         .tables[homeProvider.xlsxFileSelectedTable]
@@ -115,6 +131,37 @@ class HomeScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: ListTile(
+                                  subtitle: Text(
+                                    'Tap to view more',
+                                    style: TextStyle(
+                                      color: Colors.white60,
+                                    ),
+                                  ),
+                                  trailing: FutureBuilder(
+                                    future:
+                                        getApplicationDocumentsDirectoryPath(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                        // shows download icon if file doesn't exist else shows checked icon
+                                        return Container(
+                                          margin: EdgeInsets.all(8),
+                                          child:
+                                              File('${snapshot.data}/${value.toString().substring(1, value.toString().length - 1)}.pdf')
+                                                      .existsSync()
+                                                  ? Icon(
+                                                      Icons.check,
+                                                      color: Colors.white70,
+                                                    )
+                                                  : Icon(
+                                                      Icons.file_download,
+                                                      color: Colors.white70,
+                                                    ),
+                                        );
+                                      }
+                                      return CircularProgressIndicator();
+                                    },
+                                  ),
                                   contentPadding: EdgeInsets.all(16),
                                   onTap: () {
                                     Navigator.pushNamed(context, '/result',
