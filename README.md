@@ -1,6 +1,6 @@
 <h1 align="center">Holden</h1>
 
-<p align="center"><img width="100" src="https://raw.githubusercontent.com/tirth-aubergine/holden/master/img/logo.png" alt="logo"></p>
+<p align="center"><img width="100" src="https://raw.githubusercontent.com/AubergineDevelopers/holden/master/assets/images/app_logo.png" alt="logo"></p>
 
 <p align="center">Certificate Generator made with Flutter.</p>
 
